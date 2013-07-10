@@ -306,10 +306,17 @@ define(["dojo/main", "doh/runner", "dojo/_firebug/firebug"], function(dojo, doh)
 	// Neither Dojo.Deferred() nor setTimeout() are available is this context
 	// so busy wait 
 	doh._WTF = function(callback){
-		var i=0;while( i<this._groupCounter*10000000 ){i++;};
-		(typeof callback == 'function') && callback();
+
+		if(window && window.setTimeout) {
+			window.setTimeout(callback, 1000);
+		}
+		else {
+			// I'm aware this is so ugly! Please submit fixes :)
+			var i=0;while( i<this._groupCounter*10000000 ){i++;};
+			(typeof callback == 'function') && callback();
+		}
+
 	}
-	// I'm aware this is so ugly! Please submit fixes :)
 
 //
 // Runner-Wrapper (overriden methods)
@@ -382,13 +389,7 @@ define(["dojo/main", "doh/runner", "dojo/_firebug/firebug"], function(dojo, doh)
 		doh._printTestFinished();
 	}
 
-	doh._printTestFinished = function() {
-		var node = document.getElementById("waitingNode");
-		if (node.innerText)
-			node.innerText += ".";
-		else 
-			node.textContent += ".";
-	}
+	doh._printTestFinished = function() {}
 	
 	doh._testRegistered = function(groupName, fixture){}
 
@@ -459,12 +460,24 @@ define(["dojo/main", "doh/runner", "dojo/_firebug/firebug"], function(dojo, doh)
 
 	doh._report = function(){
 		doh._WTF(function(){
-			var node = document.getElementById("report");
 			var result = doh.outputXML();
-			if (node.innerText)
-				node.innerText = result;
-			else 
-				node.textContent = result;
+		
+			// check if this module is running inside a browser
+			if(window && window.document) {
+				var node = document.getElementById("xml-report");
+				if (node.innerText) {
+					node.innerText = result;
+				}
+				else {
+					node.textContent = result;
+				}
+			}
+			else {
+				// you might want to save the result into a *.xml file.
+				// but for now we just output the xml content.
+				this.debug(result);
+			}
+
 		});
 	};
 
