@@ -6,7 +6,7 @@ A simple patch that allows Dojo DOH to generate XML JUnit compliant report
 Usage
 =
 
-Place this module in the DOH folder (at the same directory as the "runner.js"). And use it as a replacement of the normal runner.
+Place this module in the DOH folder (at the same directory as the "runner.js"). And load it from the normal runner, if you need to generate XML output.
 
 How does it work?
 =
