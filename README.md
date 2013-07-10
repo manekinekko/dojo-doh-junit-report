@@ -16,7 +16,7 @@ This patch overrides the DOH methods, in order to implement the new XML output. 
 Contribution
 = 
 
-This code is subject to improvement. Please feel free to submit fixes...
+This code needs some improvements. Please feel free to submit fixes or fork...
 
 License
 =
