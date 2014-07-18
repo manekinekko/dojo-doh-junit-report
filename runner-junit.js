@@ -373,13 +373,10 @@ define(["dojo/main", "doh/runner", "dojo/_firebug/firebug"], function(dojo, doh)
 		});
 	}
 
-	doh._testFinished = function(groupName, fixture, err){
+	doh._testFinished = function(groupName, fixture, success){
 		var _timeDiff = fixture.endTime-fixture.startTime;
 		var testElapsedTime = doh._formatTime(_timeDiff);
 
-		if(err!==null){
-			doh._handleFailure(groupName, fixture, err);
-		}
 		this._updateAttribute({
 			type: 'testcase',
 			name: 'time',
