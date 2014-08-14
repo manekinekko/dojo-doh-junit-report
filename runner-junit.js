@@ -307,7 +307,7 @@ define(["dojo/main", "doh/runner", "dojo/_firebug/firebug"], function(dojo, doh)
 	// so busy wait 
 	doh._WTF = function(callback){
 
-		if(window && window.setTimeout) {
+		if(typeof window !== 'undefined' && window.setTimeout) {
 			window.setTimeout(callback, 1000);
 		}
 		else {
@@ -373,13 +373,10 @@ define(["dojo/main", "doh/runner", "dojo/_firebug/firebug"], function(dojo, doh)
 		});
 	}
 
-	doh._testFinished = function(groupName, fixture, err){
+	doh._testFinished = function(groupName, fixture, success){
 		var _timeDiff = fixture.endTime-fixture.startTime;
 		var testElapsedTime = doh._formatTime(_timeDiff);
 
-		if(err!==null){
-			doh._handleFailure(groupName, fixture, err);
-		}
 		this._updateAttribute({
 			type: 'testcase',
 			name: 'time',
@@ -463,7 +460,7 @@ define(["dojo/main", "doh/runner", "dojo/_firebug/firebug"], function(dojo, doh)
 			var result = doh.outputXML();
 		
 			// check if this module is running inside a browser
-			if(window && window.document) {
+			if(typeof window !== 'undefined' && window.document) {
 				var node = document.getElementById("xml-report");
 				if (node.innerText) {
 					node.innerText = result;
