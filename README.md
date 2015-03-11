@@ -11,7 +11,7 @@ Place this module in the DOH folder (at the same directory as the "runner.js"). 
 How does it work?
 =
 
-This patch overrides the DOH methods, in order to implement the new XML output. The DOH methods being overriden start from [this line](https://github.com/manekinekko/dojo-doh-junit-report/blob/master/runner-junit.js#L317).
+This patch overrides the DOH methods, in order to implement the new XML output. The DOH methods being overriden start from [this line](https://github.com/manekinekko/dojo-doh-junit-report/blob/master/runner-junit.js#L322).
 
 Contribution
 = 
