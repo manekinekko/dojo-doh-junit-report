@@ -1,4 +1,4 @@
-define(["dojo/main", "doh/runner", "dojo/_firebug/firebug"], function(dojo, doh) {
+define("doh/runner-junit", ["doh/runner"], function(doh) {
 
 	// http://windyroad.org/dl/Open%20Source/JUnit.xsd
 	doh._oXmlOutput = [];
@@ -6,7 +6,7 @@ define(["dojo/main", "doh/runner", "dojo/_firebug/firebug"], function(dojo, doh)
 	doh._hashes = {};
 	doh._totalTime = 0;
 
-	doh.pushComment = function(){
+	doh.pushComment = function pushComment(){
 		var comment = '';
 		for(var arg=0; arg<arguments.length; arg++){
 			comment += ' ' + arguments[arg];
@@ -19,13 +19,13 @@ define(["dojo/main", "doh/runner", "dojo/_firebug/firebug"], function(dojo, doh)
 
 	};
 
-	doh.openTestSuites = function(){
+	doh.openTestSuites = function openTestSuites(){
 		doh._oXmlOutput.push({
 			type: 'testsuites'
 		});
 	};
 
-	doh.openTestSuite = function(args){
+	doh.openTestSuite = function openTestSuite(args){
 
 		var _date = new Date();
 		_date = _date.getFullYear()+'-'+_date.getMonth()+'-'+_date.getDay()+'T'+_date.getHours()+':'+_date.getMinutes()+':'+_date.getSeconds();
@@ -56,7 +56,7 @@ define(["dojo/main", "doh/runner", "dojo/_firebug/firebug"], function(dojo, doh)
 		});
 	};
 
-	doh.pushSystemMessage = function(args){
+	doh.pushSystemMessage = function pushSystemMessage(args){
 
 		doh._oXmlOutput.push({
 			type: 'system-out',
@@ -66,7 +66,7 @@ define(["dojo/main", "doh/runner", "dojo/_firebug/firebug"], function(dojo, doh)
 		
 	};
 
-	doh.pushSystemError = function(args){
+	doh.pushSystemError = function pushSystemError(args){
 
 		doh._oXmlOutput.push({
 			type: 'system-err',
@@ -76,7 +76,7 @@ define(["dojo/main", "doh/runner", "dojo/_firebug/firebug"], function(dojo, doh)
 
 	};
 
-	doh.openTestCase = function(args){
+	doh.openTestCase = function openTestCase(args){
 		args.time = args.time || '0.0';
 		
 		doh._oXmlOutput.push({
@@ -90,7 +90,8 @@ define(["dojo/main", "doh/runner", "dojo/_firebug/firebug"], function(dojo, doh)
 
 	};
 
-	doh.pushError = function(args){
+	doh.pushError = function pushError(args){
+
 		this._tabErrors[args.testsuite]++;
 		doh._oXmlOutput.push({
 			type: 'error',
@@ -103,13 +104,14 @@ define(["dojo/main", "doh/runner", "dojo/_firebug/firebug"], function(dojo, doh)
 
 	};
 
-	doh.pushFailure = function(args){
+	doh.pushFailure = function pushFailure(args){
 		args.type = args.type || 'junit.framework.AssertionFailedError';
 		this._tabFailures[args.testsuite]++;
 		doh._oXmlOutput.push({
 			type: 'failure',
 			hash: args.hash,
-			value: '<![CDATA[ '+args.trace+' ]]>',
+			value: args.trace,
+			// value: '<![CDATA[ '+args.trace+' ]]>',
 			attributes: {
 				type: args.type,
 				message: args.message
@@ -118,7 +120,7 @@ define(["dojo/main", "doh/runner", "dojo/_firebug/firebug"], function(dojo, doh)
 
 	};
 
-	doh.outputXML = function(){
+	doh.outputXML = function outputXML(){
 
 		var comment = [];
 		var testsuites = [];
@@ -137,14 +139,14 @@ define(["dojo/main", "doh/runner", "dojo/_firebug/firebug"], function(dojo, doh)
 		output.push('<!-- '+this._testCount+" test"+(this._testCount>1?'s':'')+" to run in "+this._groupCount+" group"+(this._groupCount>2?'s':'') +' -->');
 		output.push('<!-- ******************************* -->');
 
-		var indent = function(n){
+		var indent = function indent(n){
 			var _tab = [];
 			for(var i=0;i<n;i++){
 				_tab.push('\t');
 			}
 			return _tab.join('');
 		};
-		var getAttr = function(o){
+		var getAttr = function getAttr(o){
 			var attr = [];
 			if(o.attributes){
 				o = o.attributes;
@@ -154,7 +156,7 @@ define(["dojo/main", "doh/runner", "dojo/_firebug/firebug"], function(dojo, doh)
 			}
 	  	return attr.join(' ');
 		};
-		var getObjectFromHash = function(o, hash){
+		var getObjectFromHash = function getObjectFromHash(o, hash){
 			for (var i = o.length - 1; i >= 0; i--) {
 				if(o[i].hash && o[i].hash===hash){
 					return o[i].data;
@@ -169,14 +171,14 @@ define(["dojo/main", "doh/runner", "dojo/_firebug/firebug"], function(dojo, doh)
 			var type = o.type;
 			
 			switch(type){
-				case 'comment': 		comment.push(o); 		break;
+				case 'comment': 		comment.push(o); break;
 				case 'testsuites': 	testsuites.push(o); break;
-					case 'testsuite': 	testsuite.push(o); 	break;
-					case 'testcase': 		testcase.push(o); 	break;
-						case 'failure': 		failure.push({ _name: 'failure', hash: o.hash, data: o}); 		break;
-						case 'error': 			error.push({ _name: 'error', hash: o.hash, data: o}); 			break;
-					case 'system-out': 	systemOut.push({ _name: 'system-out', hash: o.hash, data: o}); 	break;
-					case 'system-err': 	systemErr.push({ _name: 'system-err', hash: o.hash, data: o}); 	break;
+					case 'testsuite': 	testsuite.push(o); break;
+					case 'testcase': 		testcase.push(o); break;
+						case 'failure': 		failure.push({ _name: 'failure', hash: o.hash, data: o}); break;
+						case 'error': 			error.push({ _name: 'error', hash: o.hash, data: o}); break;
+					case 'system-out': 	systemOut.push({ _name: 'system-out', hash: o.hash, data: o}); break;
+					case 'system-err': 	systemErr.push({ _name: 'system-err', hash: o.hash, data: o}); break;
 			}
 
 		};
@@ -209,8 +211,8 @@ define(["dojo/main", "doh/runner", "dojo/_firebug/firebug"], function(dojo, doh)
 						else if(error.length > 0){
 							e = getObjectFromHash(error, _hash);
 							if(e){
-								output.push(indent(3)+'<error '+e.value+'>');
-								output.push(indent(4)+getAttr(e));
+								output.push(indent(3)+'<error '+getAttr(e)+'>');
+								output.push(indent(4)+e.value);
 								output.push(indent(3)+'</error>');
 							}
 						}
@@ -241,10 +243,9 @@ define(["dojo/main", "doh/runner", "dojo/_firebug/firebug"], function(dojo, doh)
 		}
 
 		return output.join('\n');
-		output = [];
 	};
 
-	doh._generateHash = function(){
+	doh._generateHash = function _generateHash(){
 		var args = [];
 		var _h = '';
 		for (var i = arguments.length - 1; i >= 0; i--) {
@@ -258,7 +259,7 @@ define(["dojo/main", "doh/runner", "dojo/_firebug/firebug"], function(dojo, doh)
 
 	};
 
-	doh._updateAttribute = function(args){
+	doh._updateAttribute = function _updateAttribute(args){
 
 		for(var i=doh._oXmlOutput.length-1; i>=0; i--){
 
@@ -288,7 +289,7 @@ define(["dojo/main", "doh/runner", "dojo/_firebug/firebug"], function(dojo, doh)
 		};
 	})(doh);
 
-	doh._formatTime = function(n){
+	doh._formatTime = function _formatTime(n){
 		n = +n;
 		if(n===0){
 			return '0.0';
@@ -305,7 +306,7 @@ define(["dojo/main", "doh/runner", "dojo/_firebug/firebug"], function(dojo, doh)
 	// holly crap !!!!!!!!!!!!!!
 	// Neither Dojo.Deferred() nor setTimeout() are available is this context
 	// so busy wait 
-	doh._WTF = function(callback){
+	doh._WTF = function _WTF(callback){
 
 		if(typeof window !== 'undefined' && window.setTimeout) {
 			window.setTimeout(callback, 1000);
@@ -321,7 +322,7 @@ define(["dojo/main", "doh/runner", "dojo/_firebug/firebug"], function(dojo, doh)
 //
 // Runner-Wrapper (overriden methods)
 //
-	doh._init = function(){
+	doh._init = function _init(){
 		this._currentGroup = null;
 		this._currentTest = null;
 		this._tabErrors = {};
@@ -329,7 +330,7 @@ define(["dojo/main", "doh/runner", "dojo/_firebug/firebug"], function(dojo, doh)
 		doh.openTestSuites();
 	}
 
-	doh._groupStarted = function(groupName){
+	doh._groupStarted = function _groupStarted(groupName){
 		doh._groupTotalTime = 0;
 		if(doh._groupCounter){
 			doh._groupCounter++;
@@ -340,7 +341,7 @@ define(["dojo/main", "doh/runner", "dojo/_firebug/firebug"], function(dojo, doh)
 
 	}
 
-	doh._groupFinished = function(groupName, success){
+	doh._groupFinished = function _groupFinished(groupName, success){
 		doh._totalTime += doh._groupTotalTime;
 		this._updateAttribute({
 			type: 'testsuite',
@@ -365,7 +366,7 @@ define(["dojo/main", "doh/runner", "dojo/_firebug/firebug"], function(dojo, doh)
 
 	}
 
-	doh._testStarted = function(groupName, fixture){
+	doh._testStarted = function _testStarted(groupName, fixture){
 		doh.openTestCase({
 			classname: groupName,
 			name: fixture.name,
@@ -373,7 +374,7 @@ define(["dojo/main", "doh/runner", "dojo/_firebug/firebug"], function(dojo, doh)
 		});
 	}
 
-	doh._testFinished = function(groupName, fixture, success){
+	doh._testFinished = function _testFinished(groupName, fixture, success){
 		var _timeDiff = fixture.endTime-fixture.startTime;
 		var testElapsedTime = doh._formatTime(_timeDiff);
 
@@ -386,11 +387,11 @@ define(["dojo/main", "doh/runner", "dojo/_firebug/firebug"], function(dojo, doh)
 		doh._printTestFinished();
 	}
 
-	doh._printTestFinished = function() {}
+	doh._printTestFinished = function _printTestFinished() {}
 	
-	doh._testRegistered = function(groupName, fixture){}
+	doh._testRegistered = function _testRegistered(groupName, fixture){}
 
-	doh._setupGroupForRun = function(/*String*/ groupName, /*Integer*/ idx){
+	doh._setupGroupForRun = function _setupGroupForRun(/*String*/ groupName, /*Integer*/ idx){
 		var tg = this._groups[groupName];
 		doh._groupStarted(groupName);
 		doh.openTestSuite({
@@ -399,7 +400,7 @@ define(["dojo/main", "doh/runner", "dojo/_firebug/firebug"], function(dojo, doh)
 		});
 	}
 
-	doh._handleFailure = function(groupName, fixture, e){
+	doh._handleFailure = function _handleFailure(groupName, fixture, e){
 		// print('FAILED: '+doh._generateHash(groupName, fixture.name));
 
 		// mostly borrowed from JUM
@@ -453,10 +454,11 @@ define(["dojo/main", "doh/runner", "dojo/_firebug/firebug"], function(dojo, doh)
 
 	};
 
-	doh._onEnd = function(){};
+	doh._onEnd = function _onEnd(){};
 
-	doh._report = function(){
-		doh._WTF(function(){
+	doh._report = function _report(){
+
+		doh._WTF(function _report_WTF(){
 			var result = doh.outputXML();
 		
 			// check if this module is running inside a browser
@@ -472,11 +474,18 @@ define(["dojo/main", "doh/runner", "dojo/_firebug/firebug"], function(dojo, doh)
 			else {
 				// you might want to save the result into a *.xml file.
 				// but for now we just output the xml content.
-				this.debug(result);
+				doh.debug(result);
 			}
 
 		});
 	};
+
+	doh.extend(doh.Deferred, {
+		callback: function(res){
+			// this._check();
+			this._resback(res);
+		}
+	});
 
 	return doh;
 });
