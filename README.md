@@ -13,13 +13,16 @@ Step by step guide
 
 In order to make sure this script does work. Please follow these steps:
 
-1) clone the dojo/util repo (https://github.com/dojo/util)
+1) clone the dojo/util repo (https://github.com/dojo/util):
+
 ```git clone https://github.com/dojo/util dojo-utils```
 
 2) cd into the DOH folder
+
 ```cd dojo-utils/doh/```
 
 3) copy the runner-junit.js in this folder (near _nodeRunner.js)
+
 ```
 ├── LICENSE
 ├── README
@@ -48,14 +51,16 @@ In order to make sure this script does work. Please follow these steps:
 
 
 4) edit the _nodeRunner.js and include the runner-junit module, you should have something like this:
+
 ``` define(["doh/runner-junit", "require"], function(doh, require) { ```
 
 5) test it like this (you need to install Nodejs):
+
 ```node ../../dojo/dojo.js baseUrl=../../dojo load=doh test=tests/selfTest.js > report.xml```
 
 6) Voila!
-
 How does it work?
+
 =
 
 This patch overrides the DOH methods, in order to implement the new XML output. The DOH methods being overriden start from [this line](https://github.com/manekinekko/dojo-doh-junit-report/blob/master/runner-junit.js#L322).
