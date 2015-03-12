@@ -59,8 +59,8 @@ In order to make sure this script does work. Please follow these steps:
 ```node ../../dojo/dojo.js baseUrl=../../dojo load=doh test=tests/selfTest.js > report.xml```
 
 6) Voila!
-How does it work?
 
+How does it work?
 =
 
 This patch overrides the DOH methods, in order to implement the new XML output. The DOH methods being overriden start from [this line](https://github.com/manekinekko/dojo-doh-junit-report/blob/master/runner-junit.js#L322).
